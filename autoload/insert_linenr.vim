@@ -16,16 +16,12 @@ function! s:get_highlight(highlight_group)
 endfunction
 
 function! s:invert_fg_bg(hi_dict)
-  let inverted = {}
-  if has_key(a:hi_dict, "ctermfg") && has_key(a:hi_dict, "ctermbg")
-    let inverted.ctermfg = a:hi_dict.ctermbg
-    let inverted.ctermbg = a:hi_dict.ctermfg
-  endif
-  if has_key(a:hi_dict, "guifg") && has_key(a:hi_dict, "guibg")
-    let inverted.guifg = a:hi_dict.guibg
-    let inverted.guibg = a:hi_dict.guifg
-  endif
-  return inverted
+  return {
+  \ 'ctermfg': get(a:hi_dict, 'ctermbg', 'NONE'),
+  \ 'ctermbg': get(a:hi_dict, 'ctermfg', 'NONE'),
+  \ 'guifg': get(a:hi_dict, 'guibg', 'NONE'),
+  \ 'guibg': get(a:hi_dict, 'guifg', 'NONE')
+  \ }
 endfunction
 
 function! s:highlight_dict_to_string(highlight_dict)
@@ -39,9 +35,9 @@ function! s:highlight_dict_to_string(highlight_dict)
 endfunction
 
 function! insert_linenr#initialize_default_line_nr()
-  silent! let s:normal_normal = s:get_highlight('Normal')
-  silent! let s:normal_linenr = extend(copy(s:normal_normal), s:get_highlight('LineNr'))
-  silent! let s:normal_cursorlinenr = extend(copy(s:normal_normal), s:get_highlight('CursorLineNr'))
+  let base_highlight = extend({'ctermfg': 'NONE', 'ctermbg': 'NONE', 'guifg': 'NONE', 'guibg': 'NONE'}, s:get_highlight('Normal'))
+  let s:normal_linenr = extend(copy(base_highlight), s:get_highlight('LineNr'))
+  let s:normal_cursorlinenr = extend(copy(base_highlight), s:get_highlight('CursorLineNr'))
   let s:insert_linenr = s:invert_fg_bg(s:normal_linenr)
   let s:insert_cursorlinenr = s:invert_fg_bg(s:normal_cursorlinenr)
 endfunction
