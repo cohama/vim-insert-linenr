@@ -1,4 +1,4 @@
-*vim-insert-linenr*	flip the color of line number on insert mode
+*vim-insert-linenr.txt*	flip the color of line number on insert mode
 
 Version : 1.0.0
 Author  : cohama / cohama@live.jp
