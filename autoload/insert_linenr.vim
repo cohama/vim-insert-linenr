@@ -1,4 +1,5 @@
 let s:highlight_args = ["ctermfg", "ctermbg", "guifg", "guibg"]
+let s:need_to_init = 1
 
 function! s:get_highlight(highlight_group)
   redir => hl
@@ -35,13 +36,13 @@ function! s:highlight_dict_to_string(highlight_dict)
 endfunction
 
 function! insert_linenr#to_insert_line_nr()
-  if !exists('s:initialized')
+  if s:need_to_init ==# 1
     let base_highlight = extend({'ctermfg': 'NONE', 'ctermbg': 'NONE', 'guifg': 'NONE', 'guibg': 'NONE'}, s:get_highlight('Normal'))
     let s:normal_linenr = extend(copy(base_highlight), s:get_highlight('LineNr'))
     let s:normal_cursorlinenr = extend(copy(base_highlight), s:get_highlight('CursorLineNr'))
     let s:insert_linenr = s:invert_fg_bg(s:normal_linenr)
     let s:insert_cursorlinenr = s:invert_fg_bg(s:normal_cursorlinenr)
-    let s:initialized = 1
+    let s:need_to_init = 0
   endif
   silent exec 'highlight LineNr ' . s:highlight_dict_to_string(s:insert_linenr)
   silent exec 'highlight CursorLineNr ' . s:highlight_dict_to_string(s:insert_cursorlinenr)
@@ -52,4 +53,8 @@ function! insert_linenr#to_normal_line_nr()
     silent exec 'highlight LineNr ' . s:highlight_dict_to_string(s:normal_linenr)
     silent exec 'highlight CursorLineNr ' . s:highlight_dict_to_string(s:normal_cursorlinenr)
   endif
+endfunction
+
+function! insert_linenr#reset()
+  let s:need_to_init = 1
 endfunction
